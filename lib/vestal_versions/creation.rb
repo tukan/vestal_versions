@@ -80,7 +80,7 @@ module VestalVersions
             when vestal_versions_options[:only] then self.class.column_names & vestal_versions_options[:only]
             when vestal_versions_options[:except] then self.class.column_names - vestal_versions_options[:except]
             else self.class.column_names
-          end - %w(created_at created_on updated_at updated_on lock_version)
+          end - %w(created_at created_on updated_at updated_on lock_version version)
         end
         
         def set_version
