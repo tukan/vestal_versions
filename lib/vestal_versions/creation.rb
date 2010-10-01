@@ -7,6 +7,8 @@ module VestalVersions
         extend ClassMethods
         include InstanceMethods
 
+        before_update :set_version, :if => :alternative_create_version?
+
         after_update :create_version, :if => :create_version?
         after_update :update_version, :if => :update_version?
 
@@ -33,6 +35,12 @@ module VestalVersions
     # Instance methods that determine whether to save a version and actually perform the save.
     module InstanceMethods
       private
+        # Returns whether a new version should be created upon updating the parent record.
+        # It is similar to create_version? but works not only at the after_update stage.
+        def alternative_create_version?
+          self.changed & versioned_columns
+        end
+      
         # Returns whether a new version should be created upon updating the parent record.
         def create_version?
           !version_changes.blank?
@@ -74,7 +82,11 @@ module VestalVersions
             else self.class.column_names
           end - %w(created_at created_on updated_at updated_on)
         end
-
+        
+        def set_version
+          self.version = version_attributes[:number]
+        end
+        
         # Specifies the attributes used during version creation. This is separated into its own
         # method so that it can be overridden by the VestalVersions::Users feature.
         def version_attributes
