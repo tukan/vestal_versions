@@ -11,10 +11,11 @@ module VestalVersions
     def between(from, to)
       from_number, to_number = number_at(from), number_at(to)
       return [] if from_number.nil? || to_number.nil?
+      return [from, to] if (from_number - to_number).abs == 1 && from.is_a?(Version) && to.is_a?(Version)
+      return [from] if from_number == to_number && from.is_a?(Version)
 
-      condition = (from_number == to_number) ? to_number : Range.new(*[from_number, to_number].sort)
       all(
-        :conditions => {:number => condition},
+        :conditions => {:number => Range.new(*[from_number, to_number].sort)},
         :order => "#{aliased_table_name}.number #{(from_number > to_number) ? 'DESC' : 'ASC'}"
       )
     end
