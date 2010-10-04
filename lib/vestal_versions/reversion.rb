@@ -13,6 +13,11 @@ module VestalVersions
       def version
         if self[:version] ? self[:version] : @version ||= last_version
       end
+      
+      # Returns true if current version is the last version
+      def last_version?
+        self.version == last_version
+      end
 
       # Accepts a value corresponding to a specific version record, builds a history of changes
       # between that version and the current version, and then iterates over that history updating
