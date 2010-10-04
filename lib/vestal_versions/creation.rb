@@ -38,7 +38,7 @@ module VestalVersions
         # Returns whether a new version should be created upon updating the parent record.
         # It is similar to create_version? but works not only at the after_update stage.
         def alternative_create_version?
-          self.changed & versioned_columns
+          (self.changed & versioned_columns).present?
         end
       
         # Returns whether a new version should be created upon updating the parent record.
