@@ -22,7 +22,7 @@ module VestalVersions
       def changes_between(from, to, using = [])
         from_number, to_number = versions.number_at(from), versions.number_at(to)
         return {} if from_number == to_number
-        chain = (using.present? ? using : versions.between(from, to)).reject(&:initial?)
+        chain = (using.present? ? using.to_a.select{|v| v.number >=  from_number && v.number <= to_number} : versions.between(from, to)).reject(&:initial?)
         return {} if chain.empty?
 
         backward = from_number > to_number
