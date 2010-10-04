@@ -62,7 +62,7 @@ module VestalVersions
         version != last_version
       end
 
-      # Iterates over all object resvision and yields then into block
+      # Iterates over all object revision and yields then into block
       # It is more optimal that using revert_to in loop because this methods
       # uses only one SQL query to fetch all versions.
       #
