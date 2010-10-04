@@ -18,6 +18,13 @@ module VestalVersions
       def last_version?
         self.version == last_version
       end
+      
+      # Returns the number of the last created version in the object's version history.
+      #
+      # If no associated versions exist, the object is considered at version 1.
+      def last_version
+        @last_version ||= versions.maximum(:number) || 1
+      end
 
       # Accepts a value corresponding to a specific version record, builds a history of changes
       # between that version and the current version, and then iterates over that history updating
@@ -56,13 +63,6 @@ module VestalVersions
       end
 
       private
-        # Returns the number of the last created version in the object's version history.
-        #
-        # If no associated versions exist, the object is considered at version 1.
-        def last_version
-          @last_version ||= versions.maximum(:number) || 1
-        end
-
         # Clears the cached version number instance variables so that they can be recalculated.
         # Useful after a new version is created.
         def reset_version(version = nil)
