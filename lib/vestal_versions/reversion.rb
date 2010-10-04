@@ -11,7 +11,7 @@ module VestalVersions
     module InstanceMethods
       # Returns the current version number for the versioned object.
       def version
-        if self[:version] ? self[:version] : @version ||= last_version
+        self[:version] ? self[:version] : @version ||= last_version
       end
       
       # Returns true if current version is the last version
