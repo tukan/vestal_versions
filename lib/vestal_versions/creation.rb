@@ -7,6 +7,7 @@ module VestalVersions
         extend ClassMethods
         include InstanceMethods
 
+        before_create :set_default_version
         before_update :set_version, :if => :alternative_create_version?
 
         after_update :create_version, :if => :create_version?
@@ -85,6 +86,10 @@ module VestalVersions
         
         def set_version
           self.version = version_attributes[:number]
+        end
+        
+        def set_default_version
+          self.version = 1
         end
         
         # Specifies the attributes used during version creation. This is separated into its own
