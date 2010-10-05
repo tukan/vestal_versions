@@ -107,6 +107,8 @@ module VestalVersions
       # +with_current+: (default +true+) set to +false+ if you don't want the current
       # revision to be included in the iteration.
       def each_revision_in_list(versions_array, options = {}, &block)
+        return if versions_array.length < 2
+        
         options = options.reverse_merge({ :order => :asc, :with_current => true })
                         
         current_version = versions_array.to_a.select{|v| v.number == self.version}.first
