@@ -22,13 +22,14 @@ module VestalVersions
       def changes_between(from, to, using = [])
         from_number, to_number = versions.number_at(from), versions.number_at(to)
         return {} if from_number == to_number
-        from_to = [from_number, to_number].sort
-        chain = (using.present? ? using.to_a.select{|v| v.number >= from_to[0] && v.number <= from_to[1]} : versions.between(from, to)).reject(&:initial?)
-        return {} if chain.empty?
-
         backward = from_number > to_number
+        using = backward ? using.sort.reverse : using.sort
+        from_to = [from_number, to_number].sort
+        chain = (using.present? ? using.to_a.select{|v| v.number >= from_to[0] && v.number <= from_to[1] } : versions.between(from, to)).reject(&:initial?)
+        return {} if chain.empty?
+        
         backward ? chain.pop : chain.shift unless from_number == 1 || to_number == 1
-
+        
         chain.inject({}) do |changes, version|
           changes.append_changes!(backward ? version.changes.reverse_changes : version.changes)
         end
