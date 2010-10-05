@@ -115,15 +115,11 @@ module VestalVersions
           current_version = versions_array.to_a.select{|v| v.is_a?(Version) ? v.number == self.version : v == self.version }.first
           current_version = self.version unless current_version
         
-          unless options[:with_current]
-            using = versions_array.clone
-            versions_array.delete_if{|v| v.is_a?(Version) ? v.number == self.version : v == self.version }
-          else
-            using = versions_array
-          end
-          
+          using = versions_array.clone
           using.delete_if{|v| !v.is_a?(Version) }
           
+          versions_array.delete_if{|v| v.is_a?(Version) ? v.number == self.version : v == self.version } unless options[:with_current]
+                              
           current_revision = self
           if options[:order].to_sym == :desc
             versions_array = versions_array.reverse
