@@ -25,6 +25,20 @@ module VestalVersions
       def last_version
         @last_version ||= versions.maximum(:number) || 1
       end
+      
+      # Same as revert_to but returns a new object for given value.
+      def revision(value)
+        obj = self.class.new
+        
+        self.attributes.each do |key, v|
+          obj.write_attribute(key, v)
+        end
+        
+        obj.instance_variable_set("@new_record", self.new_record?)
+        obj.revert_to(value)
+
+        obj
+      end
 
       # Accepts a value corresponding to a specific version record, builds a history of changes
       # between that version and the current version, and then iterates over that history updating
