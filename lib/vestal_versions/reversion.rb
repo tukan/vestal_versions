@@ -85,6 +85,14 @@ module VestalVersions
       # +with_current+: (default +true+) set to +false+ if you don't want the current
       # revision to be included in the iteration.
       def each_revision(options = {}, &block)
+        options = options.merge(:with_version => false)
+        each_revision_in_list([1] + self.versions.to_a, options, &block)
+      end
+      
+      # Like each_revision but also yields version object into block. 
+      # For first (version = 1) yields nil for verison.
+      def each_revision_with_version(options = {}, &block)
+        options = options.merge(:with_version => true)
         each_revision_in_list([1] + self.versions.to_a, options, &block)
       end
       
@@ -142,12 +150,30 @@ module VestalVersions
             current_revision.send(:revert_from_to, current_version, versions_array.first, using)
           end
         
-          yield current_revision
+          to_yield = revision_and_version_to_yield(current_revision, current_version, options[:with_version])
+          yield *to_yield
         
           (1..versions_array.length-1).each do |index|
             current_revision.send(:revert_from_to, versions_array[index-1], versions_array[index], using)
-
-            yield current_revision
+            
+            to_yield = revision_and_version_to_yield(current_revision, versions_array[index], options[:with_version])
+            yield *to_yield
+          end
+        end
+        
+        def revision_and_version_to_yield(current_revision, current_version, with_version = false)
+          if with_version
+            if current_version.is_a?(Fixnum) && current_version == 1
+              version_to_yield = nil
+            elsif current_version.is_a?(Fixnum)
+              version_to_yield = self.versions.at(current_version)
+            else
+              version_to_yield = current_version
+            end
+            
+            return current_revision, version_to_yield
+          else  
+            return current_revision
           end
         end
         
